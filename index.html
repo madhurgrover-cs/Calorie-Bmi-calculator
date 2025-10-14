@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calorie & BMI Counter</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🔥 Calorie & BMI Counter</h1>
+            <p>Track your health metrics with precision</p>
+        </header>
+
+        <!-- Calorie Calculator Section -->
+        <section class="calculator-card" id="calorie-section">
+            <div class="card-header">
+                <h2>🍎 Calorie Calculator</h2>
+                <button class="reset-btn" onclick="resetCalorieCalculator()">Reset</button>
+            </div>
+            
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="carbs">
+                        Carbohydrates (g)
+                        <span class="tooltip" data-tooltip="1g = 4 calories">ℹ️</span>
+                    </label>
+                    <input type="number" id="carbs" placeholder="Enter carbs in grams" min="0" step="0.1">
+                </div>
+                
+                <div class="input-field">
+                    <label for="protein">
+                        Proteins (g)
+                        <span class="tooltip" data-tooltip="1g = 4 calories">ℹ️</span>
+                    </label>
+                    <input type="number" id="protein" placeholder="Enter protein in grams" min="0" step="0.1">
+                </div>
+                
+                <div class="input-field">
+                    <label for="fats">
+                        Fats/Lipids (g)
+                        <span class="tooltip" data-tooltip="1g = 9 calories">ℹ️</span>
+                    </label>
+                    <input type="number" id="fats" placeholder="Enter fats in grams" min="0" step="0.1">
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateCalories()">Calculate Calories</button>
+
+            <div class="results" id="calorie-results">
+                <div class="results-grid">
+                    <div class="result-item">
+                        <h3>Total Calories</h3>
+                        <span id="total-calories" class="result-value">-</span>
+                    </div>
+                    <div class="result-item">
+                        <h3>From Carbs</h3>
+                        <span id="carb-calories" class="result-value">-</span>
+                        <span id="carb-percentage" class="percentage">(-)</span>
+                    </div>
+                    <div class="result-item">
+                        <h3>From Protein</h3>
+                        <span id="protein-calories" class="result-value">-</span>
+                        <span id="protein-percentage" class="percentage">(-)</span>
+                    </div>
+                    <div class="result-item">
+                        <h3>From Fats</h3>
+                        <span id="fat-calories" class="result-value">-</span>
+                        <span id="fat-percentage" class="percentage">(-)</span>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="calorieChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- BMI Calculator Section -->
+        <section class="calculator-card" id="bmi-section">
+            <div class="card-header">
+                <h2>⚖️ BMI Calculator</h2>
+                <button class="reset-btn" onclick="resetBMICalculator()">Reset</button>
+            </div>
+            
+            <div class="input-group">
+                <div class="input-field">
+                    <label for="weight">
+                        Weight
+                        <select id="weight-unit" onchange="updateWeightPlaceholder()">
+                            <option value="kg">kg</option>
+                            <option value="lbs">lbs</option>
+                        </select>
+                        <span class="tooltip" data-tooltip="Enter your current weight">ℹ️</span>
+                    </label>
+                    <input type="number" id="weight" placeholder="Enter weight in kg" min="1" step="0.1">
+                </div>
+                
+                <div class="input-field">
+                    <label for="height">
+                        Height
+                        <select id="height-unit" onchange="updateHeightPlaceholder()">
+                            <option value="m">m</option>
+                            <option value="ft">ft</option>
+                            <option value="cm">cm</option>
+                        </select>
+                        <span class="tooltip" data-tooltip="Enter your height">ℹ️</span>
+                    </label>
+                    <input type="number" id="height" placeholder="Enter height in meters" min="0.5" step="0.01">
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateBMI()">Calculate BMI</button>
+
+            <div class="results" id="bmi-results">
+                <div class="bmi-result">
+                    <h3>Your BMI</h3>
+                    <div class="bmi-value-container">
+                        <span id="bmi-value" class="bmi-number">-</span>
+                        <span id="bmi-category" class="bmi-category">-</span>
+                    </div>
+                    <div id="bmi-indicator" class="bmi-indicator"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Saved Results Section -->
+        <section class="calculator-card" id="history-section">
+            <div class="card-header">
+                <h2>📊 Saved Results</h2>
+                <button class="reset-btn" onclick="clearHistory()">Clear History</button>
+            </div>
+            <div id="saved-results" class="saved-results">
+                <p class="no-results">No saved results yet</p>
+            </div>
+        </section>
+
+        <!-- Health Information Section -->
+        <section class="calculator-card info-section">
+            <h2>🧠 Health Information</h2>
+            <div class="info-content">
+                <div class="info-item">
+                    <h3>Understanding Calories</h3>
+                    <p>Calories are units of energy your body uses for all activities. The three macronutrients provide different amounts of energy:</p>
+                    <ul>
+                        <li><strong>Carbohydrates:</strong> 4 calories per gram - Primary energy source</li>
+                        <li><strong>Proteins:</strong> 4 calories per gram - Building blocks for muscles</li>
+                        <li><strong>Fats:</strong> 9 calories per gram - Energy storage and hormone production</li>
+                    </ul>
+                </div>
+                
+                <div class="info-item">
+                    <h3>BMI Categories</h3>
+                    <p>Body Mass Index (BMI) is a measure of body fat based on height and weight:</p>
+                    <ul>
+                        <li><strong>Underweight:</strong> BMI below 18.5</li>
+                        <li><strong>Normal weight:</strong> BMI 18.5-24.9</li>
+                        <li><strong>Overweight:</strong> BMI 25-29.9</li>
+                        <li><strong>Obese:</strong> BMI 30 and above</li>
+                    </ul>
+                </div>
+
+                <div class="info-item">
+                    <h3>How They Relate</h3>
+                    <p>Calories and BMI work together for health management. Understanding your daily caloric needs based on your BMI category can help maintain a healthy weight and energy balance.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
